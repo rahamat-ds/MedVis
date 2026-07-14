@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environment
+.venv/
+venv/
+
+# IDEs
+.vscode/
+.idea/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Runtime outputs
+outputs/
+logs/
+
+# Datasets
+datasets/raw/
+
+# OS files
+.DS_Store
+Thumbs.db

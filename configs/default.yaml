@@ -1,0 +1,18 @@
+project:
+  name: MedVis
+  version: 0.1.0
+
+logging:
+  level: INFO
+
+paths:
+  raw_data: datasets/raw
+  processed_data: datasets/processed
+  outputs: outputs
+
+pipeline:
+  save_outputs: true
+  overwrite_existing: false
+
+benchmark:
+  enabled: true
