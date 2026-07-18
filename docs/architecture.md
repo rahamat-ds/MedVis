@@ -2,59 +2,59 @@
 
 The MedVis pipeline is organized as a sequence of deterministic processing stages.
 
-## Raw Image
+Raw Image
 
 ↓
 
-## Image Validation
+Image Validation
 
 ↓
 
-## Metadata Extraction
+Metadata Extraction
 
 ↓
 
-## Quality Inspection
+Quality Inspection
 
 ↓
 
-## Rule-Based Decision Engine
+Rule-Based Decision Engine
 
 ↓
 
-## Image Enhancement
+Image Enhancement
 
 ↓
 
-## Image Denoising
+Image Denoising
 
 ↓
 
-## Segmentation
+Segmentation
 
 ↓
 
-## Morphological Refinement
+Morphological Refinement
 
 ↓
 
-## Contour Analysis
+Contour Analysis
 
 ↓
 
-## Feature Extraction
+Feature Extraction
 
 ↓
 
-## Quality Evaluation
+Quality Evaluation
 
 ↓
 
-## Benchmarking
+Benchmarking
 
 ↓
 
-## Report Generation
+Report Generation
 
 Each stage is responsible for a single task and communicates through a shared image state object.
 
