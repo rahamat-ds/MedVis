@@ -1,18 +1,105 @@
+import cv2
 from src.core.imageloader import ImageLoader
 from src.inspection.inspector import Inspector
 from src.inspection.decisionEngine import DecisionEngine
-
+from pathlib import Path
+from src.preprocessing.denoiser import Denoiser
+from src.utils.visualization import side_by_side
+from src.preprocessing.preprocessor import Preprocessor
+from src.segmentation.thresholding import Thresholding
+from src.morphology.morphology import Morphology
+from src.extraction.contours import ContourExtractor
+from src.utils.visualization import draw_contour
+from src.utils.io import ImageWriter
 
 def main():
 
     image = ImageLoader.load(
-        "examples/sample.png"
+        "datasets/raw/CHNCXR_0001_0.png"
     )
 
     report = Inspector.inspect(image)
 
     recommendation = DecisionEngine.recommend(
         report
+    )
+
+    processed = Denoiser.apply(
+    image,
+    recommendation.method,
+    )
+
+    processed = Preprocessor.run(
+        image,
+        recommendation.method,
+    )
+
+    otsu = Thresholding.otsu(processed)
+
+    adaptive = Thresholding.adaptive(processed)
+
+    clean = Morphology.clean(otsu)
+
+    largest = ContourExtractor.largest(clean)
+
+    overlay = draw_contour(
+        image,
+        largest,
+    )
+
+    comparison = side_by_side(
+        image,
+        processed,
+    )
+
+    Path("outputs/processed").mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    Path("outputs/comparison").mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    cv2.imwrite(
+        "outputs/processed/result.png",
+        processed,
+    )
+
+    cv2.imwrite(
+        "outputs/comparison/comparison.png",
+        comparison,
+    )
+
+    ImageWriter.save(
+    "01_original",
+    image,
+    )
+
+    ImageWriter.save(
+        "02_denoised",
+        processed,
+    )
+
+    ImageWriter.save(
+        "03_otsu",
+        otsu,
+    )
+
+    ImageWriter.save(
+        "04_adaptive",
+        adaptive,
+    )
+
+    ImageWriter.save(
+        "05_clean",
+        clean,
+    )
+
+    ImageWriter.save(
+        "06_overlay",
+        overlay,
     )
 
     print("=" * 60)
@@ -49,6 +136,20 @@ def main():
 
     print("=" * 60)
 
+    print()
+
+    print("Output")
+
+    print("Processed image saved to:")
+    print("outputs/processed/result.png")
+
+    print()
+
+    print("Comparison saved to:")
+    print("outputs/comparison/comparison.png")
+
 
 if __name__ == "__main__":
     main()
+
+    
