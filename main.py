@@ -1,7 +1,7 @@
 import cv2
 from src.core.imageloader import ImageLoader
 from src.inspection.inspector import Inspector
-from src.inspection.decisionEngine import DecisionEngine
+from src.inspection.decision_engine import DecisionEngine
 from pathlib import Path
 from src.preprocessing.denoiser import Denoiser
 from src.utils.visualization import side_by_side
@@ -30,8 +30,10 @@ def main():
     )
 
     processed = Preprocessor.run(
-        image,
-        recommendation.method,
+        image=image,
+        method=recommendation.method,
+        contrast=report.contrast,
+        blur=report.blur,
     )
 
     otsu = Thresholding.otsu(processed)
@@ -131,6 +133,18 @@ def main():
 
     print(f"Method : {recommendation.method}")
     print(f"Reason : {recommendation.reason}")
+
+    print()
+
+    print("Adaptive Decisions")
+
+    if report.contrast < 40:
+        print("✓ CLAHE enhancement applied")
+
+    if report.blur < 150:
+        print("✓ Bilateral smoothing applied")
+
+    print(f"✓ {recommendation.method}")
 
     print()
 

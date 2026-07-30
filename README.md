@@ -58,29 +58,6 @@ tests/            Unit tests
 
 ---
 
-## Current Status
-
-🚧 Sprint 0 — Repository Foundation
-
-* Repository initialized
-* Project architecture defined
-* Development standards established
-
----
-
-## Planned Milestones
-
-* Sprint 1 — Core Infrastructure
-* Sprint 2 — Image Inspection
-* Sprint 3 — Decision Engine
-* Sprint 4 — Preprocessing
-* Sprint 5 — Segmentation
-* Sprint 6 — Feature Extraction
-* Sprint 7 — Benchmarking
-* Sprint 8 — Automation & Reporting
-
----
-
 ## License
 
 MIT License.
