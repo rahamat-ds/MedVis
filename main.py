@@ -4,6 +4,7 @@ from src.inspection.inspector import Inspector
 from src.inspection.decision_engine import DecisionEngine
 from pathlib import Path
 from src.preprocessing.denoiser import Denoiser
+from src.preprocessing.body_musk import BodyMask
 from src.utils.visualization import side_by_side
 from src.preprocessing.preprocessor import Preprocessor
 from src.segmentation.thresholding import Thresholding
@@ -18,41 +19,24 @@ def main():
         "datasets/raw/CHNCXR_0001_0.png"
     )
 
-    report = Inspector.inspect(image)
-
-    recommendation = DecisionEngine.recommend(
-        report
-    )
-
-    processed = Denoiser.apply(
-    image,
-    recommendation.method,
-    )
-
+    body_mask = BodyMask.extract(image)
+    masked_image = BodyMask.apply(image, body_mask)
+    report = Inspector.inspect(masked_image)
+    recommendation = DecisionEngine.recommend(report)
+    processed = Denoiser.apply(image, recommendation.method)
     processed = Preprocessor.run(
-        image=image,
+        image=masked_image,
         method=recommendation.method,
         contrast=report.contrast,
         blur=report.blur,
     )
 
     otsu = Thresholding.otsu(processed)
-
     adaptive = Thresholding.adaptive(processed)
-
     clean = Morphology.clean(otsu)
-
     largest = ContourExtractor.largest(clean)
-
-    overlay = draw_contour(
-        image,
-        largest,
-    )
-
-    comparison = side_by_side(
-        image,
-        processed,
-    )
+    overlay = draw_contour(image,largest)
+    comparison = side_by_side(masked_image,processed)
 
     Path("outputs/processed").mkdir(
         parents=True,
@@ -64,45 +48,17 @@ def main():
         exist_ok=True,
     )
 
-    cv2.imwrite(
-        "outputs/processed/result.png",
-        processed,
-    )
+    cv2.imwrite("outputs/processed/result.png",processed)
+    cv2.imwrite("outputs/comparison/comparison.png",comparison)
 
-    cv2.imwrite(
-        "outputs/comparison/comparison.png",
-        comparison,
-    )
-
-    ImageWriter.save(
-    "01_original",
-    image,
-    )
-
-    ImageWriter.save(
-        "02_denoised",
-        processed,
-    )
-
-    ImageWriter.save(
-        "03_otsu",
-        otsu,
-    )
-
-    ImageWriter.save(
-        "04_adaptive",
-        adaptive,
-    )
-
-    ImageWriter.save(
-        "05_clean",
-        clean,
-    )
-
-    ImageWriter.save(
-        "06_overlay",
-        overlay,
-    )
+    ImageWriter.save("01_original", image)
+    ImageWriter.save("01_body_mask", body_mask)
+    ImageWriter.save("01_masked_body", masked_image)
+    ImageWriter.save("02_denoised", processed)
+    ImageWriter.save("03_otsu", otsu)
+    ImageWriter.save("04_adaptive", adaptive)
+    ImageWriter.save("05_clean", clean)
+    ImageWriter.save("06_overlay",overlay)
 
     print("=" * 60)
     print("MedVis v0.1")
@@ -125,7 +81,9 @@ def main():
     print(f"Entropy      : {report.entropy:.3f}")
     print(f"Noise        : {report.noise:.3f}")
     print(f"Blur Score   : {report.blur:.3f}")
-    print(f"Edge Density : {report.edge_density:.3f}")
+    # print(f"Edge Density : {report.edge_density:.3f}")
+    print(f"Edge Density : {report.edge_density:.6f}")
+
 
     print()
 
@@ -137,7 +95,6 @@ def main():
     print()
 
     print("Adaptive Decisions")
-
     if report.contrast < 40:
         print("✓ CLAHE enhancement applied")
 
@@ -145,15 +102,11 @@ def main():
         print("✓ Bilateral smoothing applied")
 
     print(f"✓ {recommendation.method}")
-
     print()
-
     print("=" * 60)
 
     print()
-
     print("Output")
-
     print("Processed image saved to:")
     print("outputs/processed/result.png")
 
@@ -161,7 +114,6 @@ def main():
 
     print("Comparison saved to:")
     print("outputs/comparison/comparison.png")
-
 
 if __name__ == "__main__":
     main()

@@ -40,11 +40,17 @@ def blur(image):
 
 def edge_density(image):
     gray = to_grayscale(image)
-    edges = cv2.Canny(gray, 100, 200)
 
-    return float(
-        np.count_nonzero(edges) / edges.size
-    )
+    median = np.median(gray)
+
+    lower = int(max(0, 0.66 * median))
+    upper = int(min(255, 1.33 * median))
+
+    edges = cv2.Canny(gray, lower, upper)
+
+    density = np.count_nonzero(edges) / edges.size
+
+    return float(density)
 
 
 def bit_depth(image):
